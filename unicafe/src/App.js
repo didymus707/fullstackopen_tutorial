@@ -1,5 +1,7 @@
-import { Flex, Button, Container, Heading, Box, Text } from "@chakra-ui/react";
+import { Flex, Container, Heading, Box } from "@chakra-ui/react";
 import { useState } from "react";
+import { FeedbackButton } from "./components/Button";
+import { Statistics } from "./components/Statistics";
 
 const App = () => {
   // save clicks of each button to its own state
@@ -20,41 +22,31 @@ const App = () => {
   return (
     <Container maxW="xl" my={30}>
       <Heading my={4}>Give Feedback</Heading>
-      <Flex justify="space-between" my={4}>
-        <Button onClick={handleGood}>Good</Button>
-        <Button onClick={handleNeutral}>Neutral</Button>
-        <Button onClick={handleBad}>Bad</Button>
+      <Flex justify="space-between" my={8}>
+        <FeedbackButton text="Good" handleButton={handleGood} />
+        <FeedbackButton text="Neutral" handleButton={handleNeutral} />
+        <FeedbackButton text="Bad" handleButton={handleBad} />
       </Flex>
       <Container>
         <Box>
-          <Heading as="h3" size="md">
-            Statistics
-          </Heading>
+          <Heading>Statistics</Heading>
         </Box>
 
-        <Container>
-          <Box>
-            <Flex>
-              <Text fontSize="md">Good</Text>: {good}
-            </Flex>
-            <Flex>
-              <Text fontSize="md">Neutral</Text>: {neutral}
-            </Flex>
-            <Flex>
-              <Text fontSize="md">Bad</Text>: {bad}
-            </Flex>
-            <Flex>
-              <Text fontSize="md">Average</Text>: {average}
-            </Flex>
-            <Flex>
-              <Text fontSize="md">Total</Text>: {total}
-            </Flex>
-            <Flex>
-              <Text fontSize="md">Positive Feedbacks</Text>:{" "}
-              {percentageOfPositive()}
-            </Flex>
-          </Box>
-        </Container>
+        {good > 0 || bad > 0 || neutral > 0 ? (
+          <>
+            <Statistics text="Good" value={good} />
+            <Statistics text="Neutral" value={neutral} />
+            <Statistics text="Bad" value={bad} />
+            <Statistics text="All" value={total} />
+            <Statistics text="Average" value={average} />
+            <Statistics
+              text="Positive Feedback"
+              value={percentageOfPositive()}
+            />
+          </>
+        ) : (
+          <Box>No feedback given</Box>
+        )}
       </Container>
     </Container>
   );
