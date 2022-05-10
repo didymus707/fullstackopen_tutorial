@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ChakraProvider,
   Box,
@@ -21,6 +21,7 @@ function App() {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients',
   ];
   const [selected, setSelected] = useState(0);
+  const [mostVoted, setMostVoted] = useState(0);
   const [votes, setVotes] = useState({
     0: 0,
     1: 0,
@@ -30,27 +31,42 @@ function App() {
     5: 0,
     6: 0,
   });
+  const [max, setMax] = useState(0);
 
   const getRandomInt = int => setSelected(Math.floor(Math.random() * int));
-  const upVote = (id) => setVotes({...votes, [id]: votes[id] + 1});
+
+  const upVote = id => {
+    setVotes({ ...votes, [id]: votes[id] + 1 });
+  };
+
+  useEffect(() => {
+    const result = Object.keys(votes).reduce((a, b) =>
+      votes[a] > votes[b] ? a : b
+    );
+    setMostVoted(result);
+    setMax(votes[result]);
+  }, [votes]);
 
   return (
     <ChakraProvider theme={theme}>
-      <Box textAlign="center" fontSize="xl">
+      <Box textAlign="center" fontSize="xl" m="50px auto">
         <Grid minH="100vh" p={3}>
           <VStack spacing={8}>
             <Text>{anecdotes[selected]}</Text>
             <Text fontSize="xs">
               has {votes[selected]} {votes[selected] > 1 ? 'votes' : 'vote'}
             </Text>
-            <Button onClick={() => upVote(selected)}>Vote</Button>
-            <Button onClick={() => getRandomInt(anecdotes.length)}>
-              Next anecdote
-            </Button>
+            <HStack>
+              <Button onClick={() => upVote(selected)}>Vote</Button>
+              <Button onClick={() => getRandomInt(anecdotes.length)}>
+                Next anecdote
+              </Button>
+            </HStack>
           </VStack>
           <VStack>
-            <Text fontSize='4xl'>Anecdote with Most Votes</Text>
-            <Text fontSize='2xl'></Text>
+            <Text fontSize="4xl">Anecdote with Most Votes</Text>
+            <Text fontSize="2xl">{anecdotes[mostVoted]}</Text>
+            <Text fontSize="2xl">{`has ${max} votes`}</Text>
           </VStack>
         </Grid>
       </Box>
